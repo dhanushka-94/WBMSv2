@@ -6,10 +6,8 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center space-x-3">
-                        <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-white bg-opacity-20 text-white">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
-                            </svg>
+                        <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-white bg-opacity-20 p-1.5">
+                            <img src="{{ asset('images/wassip-logo-only.png') }}" alt="WASSIP Logo" class="h-full w-full object-contain">
                         </div>
                         <div class="text-white">
                             <div class="font-bold text-lg leading-tight">DN WASSIP</div>

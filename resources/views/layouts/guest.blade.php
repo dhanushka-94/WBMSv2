@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>DN WASSIP - {{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'Dunsinane Estate Water Supply and Management System') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -26,10 +26,8 @@
                 <!-- Logo and Branding -->
                 <div class="text-center mb-8">
                     <div class="flex justify-center items-center space-x-4 mb-4">
-                        <div class="flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-xl">
-                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
-                            </svg>
+                        <div class="flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 shadow-xl p-2">
+                            <img src="{{ asset('images/wassip-logo-only.png') }}" alt="WASSIP Logo" class="h-full w-full object-contain">
                         </div>
                         <div class="text-left">
                             <h1 class="text-3xl font-bold text-gray-800">DN WASSIP</h1>

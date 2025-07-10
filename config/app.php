@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'DN WASSIP'),
+    'name' => env('APP_NAME', 'Dunsinane Estate Water Supply and Management System'),
 
     /*
     |--------------------------------------------------------------------------
