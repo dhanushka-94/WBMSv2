@@ -33,6 +33,26 @@ php-openssl
 
 ---
 
+## ⚠️ **CRITICAL: Composer Dependencies**
+
+**Laravel applications require the `vendor/` folder with all PHP dependencies. Since most shared hosting providers don't have Composer installed, you MUST upload the vendor folder.**
+
+### Option A: Download Pre-built Package (Recommended)
+1. **Contact developer** for a complete package with vendor folder included
+2. **Or download from GitHub releases** if available
+
+### Option B: Build Locally (If you have PHP + Composer)
+1. **Download the project** locally
+2. **Run:** `composer install --no-dev --optimize-autoloader`
+3. **Upload the entire project** including the generated `vendor/` folder
+
+### Option C: Web-based Composer (Advanced)
+Some hosting providers offer Composer in control panel. Check if yours does.
+
+**⚠️ WARNING:** Without the vendor folder, you'll get "HTTP ERROR 500" and missing autoload.php errors.
+
+---
+
 ## 📁 Step 2: File Upload Process
 
 ### Method 1: Direct Download from GitHub (Recommended)
