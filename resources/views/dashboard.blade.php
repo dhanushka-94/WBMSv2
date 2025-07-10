@@ -12,6 +12,10 @@
                 </h1>
                 <p class="text-blue-600 font-medium">Dunsinane Estate Water Supply and Management System</p>
                 <p class="text-gray-600 text-sm mt-1">Customer Relationship Management</p>
+                <div class="mt-2 flex items-center space-x-2 text-xs text-gray-500">
+                    <i class="fas fa-code"></i>
+                    <span>Developed by <strong class="text-blue-600">Olexto Digital Solutions (Pvt) Ltd</strong></span>
+                </div>
             </div>
             <div class="mt-4 md:mt-0">
                 <div class="flex items-center space-x-2 text-sm text-gray-600">

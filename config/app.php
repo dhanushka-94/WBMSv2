@@ -7,13 +7,13 @@ return [
     | Application Name
     |--------------------------------------------------------------------------
     |
-    | This value is the name of your application, which will be used when the
+    | This value is the name of your application. This value is used when the
     | framework needs to place the application's name in a notification or
-    | other UI elements where an application name needs to be displayed.
+    | any other location as required by the application or its packages.
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'DN WASSIP'),
 
     /*
     |--------------------------------------------------------------------------
@@ -48,11 +48,43 @@ return [
     |
     | This URL is used by the console to properly generate URLs when using
     | the Artisan command line tool. You should set this to the root of
-    | the application so that it's available within Artisan commands.
+    | your application so that it is used when running Artisan tasks.
     |
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Developer Information
+    |--------------------------------------------------------------------------
+    |
+    | Information about the development team and company that created
+    | this application.
+    |
+    */
+
+    'developer' => [
+        'name' => 'Olexto Digital Solutions (Pvt) Ltd',
+        'email' => 'info@olexto.com',
+        'website' => 'https://www.olexto.com',
+        'description' => 'Professional software development and digital transformation solutions',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Version Information
+    |--------------------------------------------------------------------------
+    |
+    | Version information for the application
+    |
+    */
+
+    'version' => [
+        'number' => '1.0.0',
+        'name' => 'Initial Release',
+        'build_date' => '2024-01-10',
+    ],
 
     /*
     |--------------------------------------------------------------------------

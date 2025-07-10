@@ -18,7 +18,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen bg-gray-100 flex flex-col">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
@@ -31,9 +31,27 @@
             @endisset
 
             <!-- Page Content -->
-            <main>
+            <main class="flex-grow">
                 @yield('content')
             </main>
+
+            <!-- Footer with Developer Credits -->
+            <footer class="bg-gray-800 text-white py-4 px-4 sm:px-6 lg:px-8">
+                <div class="max-w-7xl mx-auto">
+                    <div class="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
+                        <div class="text-sm text-gray-300">
+                            © {{ date('Y') }} DN WASSIP - Dunsinane Estate Water Supply and Management System
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm text-gray-300">
+                            <span>Developed by</span>
+                            <a href="#" class="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200">
+                                <i class="fas fa-code mr-1"></i>
+                                Olexto Digital Solutions (Pvt) Ltd
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
     </body>
 </html>
