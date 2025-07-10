@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             DivisionSeeder::class,
             CustomerTypeSeeder::class,
-            GuarantorSeeder::class,
+            // GuarantorSeeder::class, // Removed - sample data not needed for production
             // Note: RateSeeder should be run separately when needed
             // CustomerSampleSeeder::class, // Removed - no longer needed for production
         ]);
@@ -28,11 +28,11 @@ class DatabaseSeeder extends Seeder
         echo "   ✅ System administrator user\n";
         echo "   ✅ Divisions\n";
         echo "   ✅ Customer types\n";
-        echo "   ✅ Guarantors\n";
         echo "\n💡 Next steps:\n";
         echo "   1. Login at: http://127.0.0.1:8000/login\n";
         echo "   2. Change the default admin password\n";
         echo "   3. Configure rate structure in Settings\n";
-        echo "   4. Start adding real customers\n";
+        echo "   4. Add guarantors as needed for customers\n";
+        echo "   5. Start adding real customers\n";
     }
 }
