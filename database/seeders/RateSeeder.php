@@ -18,110 +18,209 @@ class RateSeeder extends Seeder
 
         $effectiveDate = Carbon::now()->startOfMonth();
 
-        // Residential Rates (Tiered Structure)
-        $residentialRates = [
+        // Sri Lankan Water Billing Rates (All customer types use same structure)
+        $waterRates = [
             [
-                'name' => 'Residential - Basic (0-10 units)',
+                'name' => 'Fixed Charge (0 units)',
                 'customer_type' => 'residential',
                 'tier_from' => 0,
-                'tier_to' => 10,
-                'rate_per_unit' => 7.50,
-                'fixed_charge' => 100.00,
-                'description' => 'Basic residential rate for first 10 cubic meters'
+                'tier_to' => 0,
+                'rate_per_unit' => 0,
+                'fixed_charge' => 150.00,
+                'description' => 'Fixed monthly charge for 0 units consumption'
             ],
             [
-                'name' => 'Residential - Standard (11-20 units)',
+                'name' => 'Free Allowance (0-5 units)',
+                'customer_type' => 'residential',
+                'tier_from' => 0,
+                'tier_to' => 5,
+                'rate_per_unit' => 0,
+                'fixed_charge' => 0,
+                'description' => 'Free allowance for first 5 units'
+            ],
+            [
+                'name' => 'Tier 1 (6-10 units)',
+                'customer_type' => 'residential',
+                'tier_from' => 6,
+                'tier_to' => 10,
+                'rate_per_unit' => 12.00,
+                'fixed_charge' => 0,
+                'description' => 'Rs. 12 per unit for 6-10 units'
+            ],
+            [
+                'name' => 'Tier 2 (11-15 units)',
                 'customer_type' => 'residential',
                 'tier_from' => 11,
-                'tier_to' => 20,
-                'rate_per_unit' => 15.00,
-                'fixed_charge' => 100.00,
-                'description' => 'Standard residential rate for 11-20 cubic meters'
+                'tier_to' => 15,
+                'rate_per_unit' => 18.00,
+                'fixed_charge' => 0,
+                'description' => 'Rs. 18 per unit for 11-15 units'
             ],
             [
-                'name' => 'Residential - High (21-30 units)',
+                'name' => 'Tier 3 (16-20 units)',
+                'customer_type' => 'residential',
+                'tier_from' => 16,
+                'tier_to' => 20,
+                'rate_per_unit' => 25.00,
+                'fixed_charge' => 0,
+                'description' => 'Rs. 25 per unit for 16-20 units'
+            ],
+            [
+                'name' => 'Tier 4 (21-25 units)',
                 'customer_type' => 'residential',
                 'tier_from' => 21,
-                'tier_to' => 30,
-                'rate_per_unit' => 25.00,
-                'fixed_charge' => 100.00,
-                'description' => 'High usage residential rate for 21-30 cubic meters'
-            ],
-            [
-                'name' => 'Residential - Premium (31+ units)',
-                'customer_type' => 'residential',
-                'tier_from' => 31,
-                'tier_to' => null,
-                'rate_per_unit' => 35.00,
-                'fixed_charge' => 100.00,
-                'description' => 'Premium residential rate for usage above 30 cubic meters'
-            ]
-        ];
-
-        // Commercial Rates (Tiered Structure)
-        $commercialRates = [
-            [
-                'name' => 'Commercial - Basic (0-25 units)',
-                'customer_type' => 'commercial',
-                'tier_from' => 0,
                 'tier_to' => 25,
-                'rate_per_unit' => 20.00,
-                'fixed_charge' => 250.00,
-                'description' => 'Basic commercial rate for first 25 cubic meters'
+                'rate_per_unit' => 35.00,
+                'fixed_charge' => 0,
+                'description' => 'Rs. 35 per unit for 21-25 units'
             ],
             [
-                'name' => 'Commercial - Standard (26-50 units)',
-                'customer_type' => 'commercial',
+                'name' => 'Tier 5 (26+ units)',
+                'customer_type' => 'residential',
                 'tier_from' => 26,
-                'tier_to' => 50,
-                'rate_per_unit' => 30.00,
-                'fixed_charge' => 250.00,
-                'description' => 'Standard commercial rate for 26-50 cubic meters'
-            ],
-            [
-                'name' => 'Commercial - High (51+ units)',
-                'customer_type' => 'commercial',
-                'tier_from' => 51,
                 'tier_to' => null,
                 'rate_per_unit' => 40.00,
-                'fixed_charge' => 250.00,
-                'description' => 'High usage commercial rate for usage above 50 cubic meters'
+                'fixed_charge' => 0,
+                'description' => 'Rs. 40 per unit for usage above 25 units'
             ]
         ];
 
-        // Industrial Rates (Tiered Structure)
+        // Commercial rates (same structure)
+        $commercialRates = [
+            [
+                'name' => 'Fixed Charge (0 units)',
+                'customer_type' => 'commercial',
+                'tier_from' => 0,
+                'tier_to' => 0,
+                'rate_per_unit' => 0,
+                'fixed_charge' => 150.00,
+                'description' => 'Fixed monthly charge for 0 units consumption'
+            ],
+            [
+                'name' => 'Free Allowance (0-5 units)',
+                'customer_type' => 'commercial',
+                'tier_from' => 0,
+                'tier_to' => 5,
+                'rate_per_unit' => 0,
+                'fixed_charge' => 0,
+                'description' => 'Free allowance for first 5 units'
+            ],
+            [
+                'name' => 'Tier 1 (6-10 units)',
+                'customer_type' => 'commercial',
+                'tier_from' => 6,
+                'tier_to' => 10,
+                'rate_per_unit' => 12.00,
+                'fixed_charge' => 0,
+                'description' => 'Rs. 12 per unit for 6-10 units'
+            ],
+            [
+                'name' => 'Tier 2 (11-15 units)',
+                'customer_type' => 'commercial',
+                'tier_from' => 11,
+                'tier_to' => 15,
+                'rate_per_unit' => 18.00,
+                'fixed_charge' => 0,
+                'description' => 'Rs. 18 per unit for 11-15 units'
+            ],
+            [
+                'name' => 'Tier 3 (16-20 units)',
+                'customer_type' => 'commercial',
+                'tier_from' => 16,
+                'tier_to' => 20,
+                'rate_per_unit' => 25.00,
+                'fixed_charge' => 0,
+                'description' => 'Rs. 25 per unit for 16-20 units'
+            ],
+            [
+                'name' => 'Tier 4 (21-25 units)',
+                'customer_type' => 'commercial',
+                'tier_from' => 21,
+                'tier_to' => 25,
+                'rate_per_unit' => 35.00,
+                'fixed_charge' => 0,
+                'description' => 'Rs. 35 per unit for 21-25 units'
+            ],
+            [
+                'name' => 'Tier 5 (26+ units)',
+                'customer_type' => 'commercial',
+                'tier_from' => 26,
+                'tier_to' => null,
+                'rate_per_unit' => 40.00,
+                'fixed_charge' => 0,
+                'description' => 'Rs. 40 per unit for usage above 25 units'
+            ]
+        ];
+
+        // Industrial rates (same structure)
         $industrialRates = [
             [
-                'name' => 'Industrial - Basic (0-100 units)',
+                'name' => 'Fixed Charge (0 units)',
                 'customer_type' => 'industrial',
                 'tier_from' => 0,
-                'tier_to' => 100,
+                'tier_to' => 0,
+                'rate_per_unit' => 0,
+                'fixed_charge' => 150.00,
+                'description' => 'Fixed monthly charge for 0 units consumption'
+            ],
+            [
+                'name' => 'Free Allowance (0-5 units)',
+                'customer_type' => 'industrial',
+                'tier_from' => 0,
+                'tier_to' => 5,
+                'rate_per_unit' => 0,
+                'fixed_charge' => 0,
+                'description' => 'Free allowance for first 5 units'
+            ],
+            [
+                'name' => 'Tier 1 (6-10 units)',
+                'customer_type' => 'industrial',
+                'tier_from' => 6,
+                'tier_to' => 10,
+                'rate_per_unit' => 12.00,
+                'fixed_charge' => 0,
+                'description' => 'Rs. 12 per unit for 6-10 units'
+            ],
+            [
+                'name' => 'Tier 2 (11-15 units)',
+                'customer_type' => 'industrial',
+                'tier_from' => 11,
+                'tier_to' => 15,
+                'rate_per_unit' => 18.00,
+                'fixed_charge' => 0,
+                'description' => 'Rs. 18 per unit for 11-15 units'
+            ],
+            [
+                'name' => 'Tier 3 (16-20 units)',
+                'customer_type' => 'industrial',
+                'tier_from' => 16,
+                'tier_to' => 20,
                 'rate_per_unit' => 25.00,
-                'fixed_charge' => 500.00,
-                'description' => 'Basic industrial rate for first 100 cubic meters'
+                'fixed_charge' => 0,
+                'description' => 'Rs. 25 per unit for 16-20 units'
             ],
             [
-                'name' => 'Industrial - Standard (101-500 units)',
+                'name' => 'Tier 4 (21-25 units)',
                 'customer_type' => 'industrial',
-                'tier_from' => 101,
-                'tier_to' => 500,
+                'tier_from' => 21,
+                'tier_to' => 25,
                 'rate_per_unit' => 35.00,
-                'fixed_charge' => 500.00,
-                'description' => 'Standard industrial rate for 101-500 cubic meters'
+                'fixed_charge' => 0,
+                'description' => 'Rs. 35 per unit for 21-25 units'
             ],
             [
-                'name' => 'Industrial - High (501+ units)',
+                'name' => 'Tier 5 (26+ units)',
                 'customer_type' => 'industrial',
-                'tier_from' => 501,
+                'tier_from' => 26,
                 'tier_to' => null,
-                'rate_per_unit' => 45.00,
-                'fixed_charge' => 500.00,
-                'description' => 'High usage industrial rate for usage above 500 cubic meters'
+                'rate_per_unit' => 40.00,
+                'fixed_charge' => 0,
+                'description' => 'Rs. 40 per unit for usage above 25 units'
             ]
         ];
 
         // Combine all rates
-        $allRates = array_merge($residentialRates, $commercialRates, $industrialRates);
+        $allRates = array_merge($waterRates, $commercialRates, $industrialRates);
 
         // Create rates
         foreach ($allRates as $rateData) {
@@ -139,10 +238,15 @@ class RateSeeder extends Seeder
             ]);
         }
 
-        $this->command->info('Water billing rates created successfully!');
-        $this->command->info('Residential rates: 4 tiers (Rs. 7.50 - Rs. 35.00 per unit)');
-        $this->command->info('Commercial rates: 3 tiers (Rs. 20.00 - Rs. 40.00 per unit)');
-        $this->command->info('Industrial rates: 3 tiers (Rs. 25.00 - Rs. 45.00 per unit)');
+        $this->command->info('Sri Lankan Water Billing rates created successfully!');
+        $this->command->info('Rate Structure:');
+        $this->command->info('- 0 units: Rs. 150 (Fixed Charge)');
+        $this->command->info('- 0-5 units: Rs. 0 (Free)');
+        $this->command->info('- 6-10 units: Rs. 12 per unit');
+        $this->command->info('- 11-15 units: Rs. 18 per unit');
+        $this->command->info('- 16-20 units: Rs. 25 per unit');
+        $this->command->info('- 21-25 units: Rs. 35 per unit');
+        $this->command->info('- 26+ units: Rs. 40 per unit');
         $this->command->info('All rates are active from: ' . $effectiveDate->format('Y-m-d'));
     }
 }

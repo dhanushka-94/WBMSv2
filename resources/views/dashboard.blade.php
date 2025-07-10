@@ -161,6 +161,99 @@
             </div>
             @endif
 
+            <!-- Billing Countdown Section -->
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-6 mb-8 shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-calendar-check text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-bold text-indigo-800">
+                                <i class="fas fa-clock mr-2"></i>Next System Billing Date
+                            </h3>
+                            <p class="text-indigo-600">{{ $billingCountdown['next_billing_date']->format('l, F j, Y') }}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div id="billing-countdown" class="text-center">
+                            @if($billingCountdown['days_until_billing'] >= 0)
+                                <div class="text-4xl font-bold text-indigo-800" id="countdown-days">
+                                    {{ $billingCountdown['days_until_billing'] }}
+                                </div>
+                                <div class="text-sm text-indigo-600 font-medium">
+                                    {{ $billingCountdown['days_until_billing'] == 0 ? 'Billing Today!' : ($billingCountdown['days_until_billing'] == 1 ? 'Day Left' : 'Days Left') }}
+                                </div>
+                            @else
+                                <div class="text-4xl font-bold text-red-600">
+                                    {{ abs($billingCountdown['days_until_billing']) }}
+                                </div>
+                                <div class="text-sm text-red-600 font-medium">Days Overdue</div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Billing Status Info -->
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-lg p-4 shadow-sm">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-calendar-day text-blue-600"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-gray-600">Default Billing Day</p>
+                                <p class="text-lg font-semibold text-gray-900">
+                                    {{ $billingCountdown['default_billing_day'] }}{{ $billingCountdown['default_billing_day'] == 1 ? 'st' : ($billingCountdown['default_billing_day'] == 2 ? 'nd' : ($billingCountdown['default_billing_day'] == 3 ? 'rd' : 'th')) }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4 shadow-sm">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-gray-600">Due Today</p>
+                                <p class="text-lg font-semibold text-gray-900">{{ $billingCountdown['customers_due_today'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4 shadow-sm">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-clock text-red-600"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-gray-600">Overdue</p>
+                                <p class="text-lg font-semibold text-gray-900">{{ $billingCountdown['customers_overdue'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="mt-4 flex flex-wrap gap-3">
+                    <a href="{{ route('settings.system-billing') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                        <i class="fas fa-cog mr-2"></i>Configure Billing
+                    </a>
+                    <a href="{{ route('settings.billing.index') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                        <i class="fas fa-calendar-alt mr-2"></i>Manage Customer Billing
+                    </a>
+                    <a href="{{ route('bills.index') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                        <i class="fas fa-file-invoice mr-2"></i>View Bills
+                    </a>
+                </div>
+            </div>
+
             <!-- Recent Activity Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <!-- Recent Customers -->
@@ -312,4 +405,64 @@
         </div>
     </div>
 </div>
+
+<script>
+// Real-time billing countdown
+function updateBillingCountdown() {
+    const nextBillingDate = new Date('{{ $billingCountdown['next_billing_date']->format('Y-m-d H:i:s') }}');
+    const now = new Date();
+    const timeDifference = nextBillingDate.getTime() - now.getTime();
+    
+    const countdownElement = document.getElementById('countdown-days');
+    const countdownContainer = document.getElementById('billing-countdown');
+    
+    if (!countdownElement || !countdownContainer) return;
+    
+    if (timeDifference > 0) {
+        // Calculate days, hours, minutes, seconds
+        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+        
+        if (days > 0) {
+            countdownContainer.innerHTML = `
+                <div class="text-4xl font-bold text-indigo-800">${days}</div>
+                <div class="text-sm text-indigo-600 font-medium">${days === 1 ? 'Day Left' : 'Days Left'}</div>
+                <div class="text-xs text-indigo-500 mt-1">${hours}h ${minutes}m ${seconds}s</div>
+            `;
+        } else if (hours > 0) {
+            countdownContainer.innerHTML = `
+                <div class="text-3xl font-bold text-orange-600">${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}</div>
+                <div class="text-sm text-orange-600 font-medium">Hours Left</div>
+            `;
+        } else {
+            countdownContainer.innerHTML = `
+                <div class="text-3xl font-bold text-red-600">${minutes}:${seconds.toString().padStart(2, '0')}</div>
+                <div class="text-sm text-red-600 font-medium">Minutes Left</div>
+            `;
+        }
+    } else {
+        // Billing date has passed
+        const daysPast = Math.floor(Math.abs(timeDifference) / (1000 * 60 * 60 * 24));
+        countdownContainer.innerHTML = `
+            <div class="text-4xl font-bold text-red-600">${daysPast}</div>
+            <div class="text-sm text-red-600 font-medium">${daysPast === 1 ? 'Day Overdue' : 'Days Overdue'}</div>
+            <div class="text-xs text-red-500 mt-1">Billing Due!</div>
+        `;
+    }
+}
+
+// Update countdown every second
+document.addEventListener('DOMContentLoaded', function() {
+    updateBillingCountdown();
+    setInterval(updateBillingCountdown, 1000);
+});
+
+// Auto-refresh page every 5 minutes to get latest data
+setTimeout(function() {
+    window.location.reload();
+}, 5 * 60 * 1000);
+</script>
+
 @endsection

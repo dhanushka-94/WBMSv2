@@ -16,6 +16,10 @@ class DatabaseSeeder extends Seeder
         // Create admin users for the Water Billing Management System
         $this->call([
             AdminUserSeeder::class,
+            DivisionSeeder::class,
+            CustomerTypeSeeder::class,
+            GuarantorSeeder::class,
+            CustomerSampleSeeder::class,
         ]);
     }
 }

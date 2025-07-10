@@ -8,6 +8,7 @@ use App\Models\CustomerType;
 use App\Models\Guarantor;
 use App\Models\WaterMeter;
 use App\Models\Bill;
+use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
 {
+    use LogsActivity;
     /**
      * Display a listing of the customers.
      */
@@ -90,7 +92,10 @@ class CustomerController extends Controller
             'guarantor_id' => 'nullable|exists:guarantors,id',
             'connection_date' => 'required|date', // Required
             'deposit_amount' => 'nullable|numeric|min:0',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
+            // Billing settings
+            'billing_day' => 'nullable|integer|min:1|max:31',
+            'auto_billing_enabled' => 'boolean'
         ]);
 
         // Handle profile photo upload
@@ -98,7 +103,19 @@ class CustomerController extends Controller
             $validated['profile_photo'] = $request->file('profile_photo')->store('customer-photos', 'public');
         }
 
+        // Set default billing settings if not provided
+        if (!isset($validated['billing_day'])) {
+            $validated['billing_day'] = 1; // Default to 1st of month
+        }
+        
+        if (!isset($validated['auto_billing_enabled'])) {
+            $validated['auto_billing_enabled'] = true; // Default to enabled
+        }
+
         $customer = Customer::create($validated);
+
+        // Log the customer creation activity
+        $this->logModelCreated($customer);
 
         return redirect()->route('customers.show', $customer)
             ->with('success', 'Customer created successfully.');
@@ -114,6 +131,9 @@ class CustomerController extends Controller
         }, 'bills' => function ($query) {
             $query->latest('bill_date')->limit(10);
         }, 'customerType', 'division']);
+
+        // Log customer view activity
+        $this->logActivity('view', "Viewed customer profile for {$customer->full_name}", $customer);
 
         $activeMeters = $customer->waterMeters()->active()->get();
         $outstandingBalance = $customer->getOutstandingBalance();
@@ -187,7 +207,10 @@ class CustomerController extends Controller
             'guarantor_id' => 'nullable|exists:guarantors,id',
             'connection_date' => 'required|date', // Required
             'deposit_amount' => 'nullable|numeric|min:0',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
+            // Billing settings
+            'billing_day' => 'nullable|integer|min:1|max:31',
+            'auto_billing_enabled' => 'boolean'
         ]);
 
         // Handle profile photo upload
@@ -199,7 +222,13 @@ class CustomerController extends Controller
             $validated['profile_photo'] = $request->file('profile_photo')->store('customer-photos', 'public');
         }
 
+        // Capture old values for activity logging
+        $oldValues = $customer->getOriginal();
+
         $customer->update($validated);
+
+        // Log the customer update activity
+        $this->logModelUpdated($customer, $oldValues);
 
         return redirect()->route('customers.show', $customer)
             ->with('success', 'Customer updated successfully.');
@@ -218,6 +247,9 @@ class CustomerController extends Controller
         if ($customer->getOutstandingBalance() > 0) {
             return back()->with('error', 'Cannot delete customer with outstanding bills.');
         }
+
+        // Log the customer deletion activity before deletion
+        $this->logModelDeleted($customer);
 
         $customer->delete();
 

@@ -31,6 +31,17 @@ class Rate extends Model
         'is_active' => 'boolean'
     ];
 
+    // Relationships
+    public function bills()
+    {
+        return $this->hasMany(Bill::class);
+    }
+
+    public function customerType()
+    {
+        return $this->belongsTo(CustomerType::class, 'customer_type', 'name');
+    }
+
     // Scopes
     public function scopeActive($query)
     {
@@ -70,24 +81,57 @@ class Rate extends Model
         $totalFixedCharges = 0;
         $remainingConsumption = $consumption;
 
+        // Handle special case for 0 consumption (fixed charge only)
+        if ($consumption == 0) {
+            $fixedRate = $rates->where('tier_from', 0)->where('tier_to', 0)->first();
+            if ($fixedRate) {
+                $totalFixedCharges = $fixedRate->fixed_charge;
+                $charges[] = [
+                    'tier_name' => $fixedRate->name,
+                    'tier_from' => 0,
+                    'tier_to' => 0,
+                    'consumption' => 0,
+                    'rate_per_unit' => 0,
+                    'charge' => 0,
+                    'fixed_charge' => $fixedRate->fixed_charge
+                ];
+            }
+            
+            return [
+                'breakdown' => $charges,
+                'water_charges' => $totalWaterCharges,
+                'fixed_charges' => $totalFixedCharges,
+                'total_charges' => $totalWaterCharges + $totalFixedCharges
+            ];
+        }
+
+        // Process tiered rates for consumption > 0
         foreach ($rates as $rate) {
             if ($remainingConsumption <= 0) break;
+            
+            // Skip the fixed charge tier (0-0) for consumption > 0
+            if ($rate->tier_from == 0 && $rate->tier_to == 0) {
+                continue;
+            }
 
             $tierConsumption = 0;
             
             if ($rate->tier_to === null) {
-                // Unlimited tier
+                // Unlimited tier (26+ units)
                 $tierConsumption = $remainingConsumption;
             } else {
-                // Limited tier
-                $tierRange = $rate->tier_to - $rate->tier_from + 1;
-                $tierConsumption = min($remainingConsumption, $tierRange);
+                // Calculate consumption for this tier
+                $tierStart = max($rate->tier_from, $consumption - $remainingConsumption + 1);
+                $tierEnd = min($rate->tier_to, $consumption);
+                
+                if ($tierStart <= $tierEnd) {
+                    $tierConsumption = $tierEnd - $tierStart + 1;
+                }
             }
 
             if ($tierConsumption > 0) {
                 $tierCharge = $tierConsumption * $rate->rate_per_unit;
                 $totalWaterCharges += $tierCharge;
-                $totalFixedCharges = max($totalFixedCharges, $rate->fixed_charge);
 
                 $charges[] = [
                     'tier_name' => $rate->name,
@@ -96,7 +140,7 @@ class Rate extends Model
                     'consumption' => $tierConsumption,
                     'rate_per_unit' => $rate->rate_per_unit,
                     'charge' => $tierCharge,
-                    'fixed_charge' => $rate->fixed_charge
+                    'fixed_charge' => 0
                 ];
 
                 $remainingConsumption -= $tierConsumption;

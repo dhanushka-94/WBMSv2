@@ -44,8 +44,8 @@
                                 class="text-white hover:text-blue-200 hover:bg-white hover:bg-opacity-10 {{ request()->routeIs('bills.*') ? 'bg-white bg-opacity-20 text-white' : '' }}">
                         {{ __('Bills') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('rates.index')" :active="request()->routeIs('rates.*')"
-                                class="text-white hover:text-blue-200 hover:bg-white hover:bg-opacity-10 {{ request()->routeIs('rates.*') ? 'bg-white bg-opacity-20 text-white' : '' }}">
+                    <x-nav-link :href="route('settings.rates.index')" :active="request()->routeIs('settings.rates.*')"
+                                class="text-white hover:text-blue-200 hover:bg-white hover:bg-opacity-10 {{ request()->routeIs('settings.rates.*') ? 'bg-white bg-opacity-20 text-white' : '' }}">
                         {{ __('Rates') }}
                     </x-nav-link>
                     <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')"
@@ -55,6 +55,10 @@
                     <x-nav-link :href="route('settings.index')" :active="request()->routeIs('settings.*')"
                                 class="text-white hover:text-blue-200 hover:bg-white hover:bg-opacity-10 {{ request()->routeIs('settings.*') ? 'bg-white bg-opacity-20 text-white' : '' }}">
                         {{ __('Settings') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('activity-logs.index')" :active="request()->routeIs('activity-logs.*')"
+                                class="text-white hover:text-blue-200 hover:bg-white hover:bg-opacity-10 {{ request()->routeIs('activity-logs.*') ? 'bg-white bg-opacity-20 text-white' : '' }}">
+                        {{ __('Activity Logs') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -132,7 +136,7 @@
                                    class="text-white hover:text-blue-200 hover:bg-white hover:bg-opacity-10">
                 {{ __('Bills') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('rates.index')" :active="request()->routeIs('rates.*')"
+            <x-responsive-nav-link :href="route('settings.rates.index')" :active="request()->routeIs('settings.rates.*')"
                                    class="text-white hover:text-blue-200 hover:bg-white hover:bg-opacity-10">
                 {{ __('Rates') }}
             </x-responsive-nav-link>
@@ -143,6 +147,10 @@
             <x-responsive-nav-link :href="route('settings.index')" :active="request()->routeIs('settings.*')"
                                    class="text-white hover:text-blue-200 hover:bg-white hover:bg-opacity-10">
                 {{ __('Settings') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('activity-logs.index')" :active="request()->routeIs('activity-logs.*')"
+                                   class="text-white hover:text-blue-200 hover:bg-white hover:bg-opacity-10">
+                {{ __('Activity Logs') }}
             </x-responsive-nav-link>
         </div>
 

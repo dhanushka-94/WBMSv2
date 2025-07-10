@@ -33,12 +33,17 @@ class Customer extends Model
         'guarantor_id',
         'connection_date',
         'deposit_amount',
-        'notes'
+        'notes',
+        'billing_day',
+        'next_billing_date',
+        'auto_billing_enabled'
     ];
 
     protected $casts = [
         'connection_date' => 'date',
-        'deposit_amount' => 'decimal:2'
+        'next_billing_date' => 'date',
+        'deposit_amount' => 'decimal:2',
+        'auto_billing_enabled' => 'boolean'
     ];
 
     // Relationships
@@ -92,6 +97,14 @@ class Customer extends Model
     public function getActiveWaterMeterAttribute(): ?WaterMeter
     {
         return $this->waterMeters()->where('status', 'active')->first();
+    }
+
+    /**
+     * Get name for activity logging
+     */
+    public function getLogName(): string
+    {
+        return "{$this->full_name} ({$this->account_number})";
     }
 
     // Scopes
@@ -188,6 +201,84 @@ class Customer extends Model
     }
 
     /**
+     * Calculate next billing date based on billing day
+     */
+    public function calculateNextBillingDate(): ?string
+    {
+        if (!$this->billing_day) {
+            return null;
+        }
+
+        $today = now();
+        $currentMonth = $today->month;
+        $currentYear = $today->year;
+        
+        // Try to create billing date for current month
+        try {
+            $billingDate = \Carbon\Carbon::create($currentYear, $currentMonth, $this->billing_day);
+            
+            // If billing date has passed this month, move to next month
+            if ($billingDate->isPast()) {
+                $billingDate = $billingDate->addMonth();
+            }
+            
+            return $billingDate->format('Y-m-d');
+        } catch (\Exception $e) {
+            // If day doesn't exist in current month (e.g., 31st in February), use last day of month
+            $billingDate = \Carbon\Carbon::create($currentYear, $currentMonth, 1)->endOfMonth();
+            
+            if ($billingDate->isPast()) {
+                $billingDate = $billingDate->addMonth()->endOfMonth();
+            }
+            
+            return $billingDate->format('Y-m-d');
+        }
+    }
+
+    /**
+     * Update next billing date
+     */
+    public function updateNextBillingDate(): void
+    {
+        $this->update([
+            'next_billing_date' => $this->calculateNextBillingDate()
+        ]);
+    }
+
+    /**
+     * Check if customer is due for billing
+     */
+    public function isDueForBilling(): bool
+    {
+        if (!$this->auto_billing_enabled || !$this->next_billing_date) {
+            return false;
+        }
+
+        return now()->gte($this->next_billing_date);
+    }
+
+    /**
+     * Get billing day display text
+     */
+    public function getBillingDayTextAttribute(): string
+    {
+        if (!$this->billing_day) {
+            return 'Not set';
+        }
+
+        $suffix = 'th';
+        if ($this->billing_day == 1 || $this->billing_day == 21 || $this->billing_day == 31) {
+            $suffix = 'st';
+        } elseif ($this->billing_day == 2 || $this->billing_day == 22) {
+            $suffix = 'nd';
+        } elseif ($this->billing_day == 3 || $this->billing_day == 23) {
+            $suffix = 'rd';
+        }
+
+        return $this->billing_day . $suffix . ' of each month';
+    }
+
+    /**
      * Boot method to auto-generate account number and reference number
      */
     protected static function boot()
@@ -206,6 +297,28 @@ class Customer extends Model
                     $customer->division_id, 
                     $customer->customer_type_id
                 );
+            }
+
+            // Set default billing day from system configuration if not provided
+            if (empty($customer->billing_day)) {
+                $customer->billing_day = \App\Models\SystemConfiguration::getDefaultBillingDay();
+            }
+
+            // Set default auto-billing status from system configuration if not provided
+            if (is_null($customer->auto_billing_enabled)) {
+                $customer->auto_billing_enabled = \App\Models\SystemConfiguration::getDefaultAutoBilling();
+            }
+
+            // Calculate initial next billing date
+            if (empty($customer->next_billing_date) && $customer->billing_day) {
+                $customer->next_billing_date = $customer->calculateNextBillingDate();
+            }
+        });
+
+        static::updating(function ($customer) {
+            // Recalculate next billing date if billing day changed
+            if ($customer->isDirty('billing_day') && $customer->billing_day) {
+                $customer->next_billing_date = $customer->calculateNextBillingDate();
             }
         });
     }

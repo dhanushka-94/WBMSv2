@@ -96,6 +96,18 @@ class DashboardController extends Controller
             'pending_readings' => $pendingReadings
         ];
 
+        // Billing countdown data
+        $defaultBillingDay = \App\Models\SystemConfiguration::getDefaultBillingDay();
+        $nextBillingDate = $this->calculateNextSystemBillingDate($defaultBillingDay);
+        $billingCountdown = [
+            'next_billing_date' => $nextBillingDate,
+            'days_until_billing' => Carbon::now()->diffInDays($nextBillingDate, false),
+            'default_billing_day' => $defaultBillingDay,
+            'customers_due_today' => Customer::where('next_billing_date', Carbon::now()->format('Y-m-d'))->count(),
+            'customers_overdue' => Customer::where('next_billing_date', '<', Carbon::now()->format('Y-m-d'))
+                                         ->whereNotNull('next_billing_date')->count()
+        ];
+
         return view('dashboard', compact(
             'totalCustomers',
             'activeCustomers', 
@@ -115,7 +127,8 @@ class DashboardController extends Controller
             'recentBills',
             'consumptionTrend',
             'revenueTrend',
-            'alerts'
+            'alerts',
+            'billingCountdown'
         ));
     }
 
@@ -246,5 +259,36 @@ class DashboardController extends Controller
             'overdueCount',
             'overdueByPeriod'
         ));
+    }
+
+    /**
+     * Calculate next system billing date based on default billing day
+     */
+    private function calculateNextSystemBillingDate(int $billingDay): Carbon
+    {
+        $today = Carbon::now();
+        $currentMonth = $today->month;
+        $currentYear = $today->year;
+        
+        try {
+            // Try to create billing date for current month
+            $billingDate = Carbon::create($currentYear, $currentMonth, $billingDay);
+            
+            // If billing date has passed this month, move to next month
+            if ($billingDate->isPast()) {
+                $billingDate = $billingDate->addMonth();
+            }
+            
+            return $billingDate;
+        } catch (\Exception $e) {
+            // If day doesn't exist in current month (e.g., 31st in February), use last day of month
+            $billingDate = Carbon::create($currentYear, $currentMonth, 1)->endOfMonth();
+            
+            if ($billingDate->isPast()) {
+                $billingDate = $billingDate->addMonth()->endOfMonth();
+            }
+            
+            return $billingDate;
+        }
     }
 }

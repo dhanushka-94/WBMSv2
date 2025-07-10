@@ -555,6 +555,84 @@
                     </div>
                 </div>
 
+                <!-- Billing Settings Section -->
+                <div class="bg-gradient-to-r from-orange-500 to-red-600 p-6">
+                    <h2 class="text-xl font-semibold text-white flex items-center">
+                        <i class="fas fa-calendar-alt mr-3"></i>
+                        Billing Settings
+                    </h2>
+                    <p class="text-orange-100 mt-1">Automated billing configuration</p>
+                </div>
+
+                <div class="p-6 bg-orange-50 border-b border-orange-100">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Billing Day -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">
+                                Billing Day
+                            </label>
+                            <div class="relative">
+                                <select name="billing_day"
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none transition-colors appearance-none @error('billing_day') border-red-300 @enderror">
+                                    <option value="">Select Day</option>
+                                    @for($day = 1; $day <= 31; $day++)
+                                        <option value="{{ $day }}" {{ old('billing_day', 1) == $day ? 'selected' : '' }}>
+                                            {{ $day }}{{ $day == 1 || $day == 21 || $day == 31 ? 'st' : ($day == 2 || $day == 22 ? 'nd' : ($day == 3 || $day == 23 ? 'rd' : 'th')) }} of each month
+                                        </option>
+                                    @endfor
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-400"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 flex items-center">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Day of month when bills are automatically generated
+                            </p>
+                            @error('billing_day')
+                                <p class="text-xs text-red-600 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Auto Billing Enabled -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">
+                                Auto Billing Status
+                            </label>
+                            <div class="relative">
+                                <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-orange-300 transition-colors cursor-pointer @error('auto_billing_enabled') border-red-300 @enderror">
+                                    <input type="checkbox" 
+                                           name="auto_billing_enabled" 
+                                           value="1" 
+                                           {{ old('auto_billing_enabled', true) ? 'checked' : '' }}
+                                           class="rounded border-gray-300 text-orange-600 shadow-sm focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                                    <div class="ml-3">
+                                        <span class="text-sm font-medium text-gray-900">Enable Automatic Billing</span>
+                                        <p class="text-xs text-gray-500">Bills will be generated automatically on the selected day</p>
+                                    </div>
+                                    <div class="ml-auto">
+                                        <i class="fas fa-robot text-orange-500"></i>
+                                    </div>
+                                </label>
+                            </div>
+                            @error('auto_billing_enabled')
+                                <p class="text-xs text-red-600 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Billing Preview -->
+                    <div class="mt-6 p-4 bg-white rounded-lg border-2 border-orange-200">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                            <i class="fas fa-eye mr-2 text-orange-500"></i>
+                            Billing Schedule Preview
+                        </h4>
+                        <div id="billing-preview" class="text-sm text-gray-600">
+                            <p><i class="fas fa-calendar mr-1"></i> Next billing date will be calculated after customer creation</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Action Buttons -->
                 <div class="bg-gray-50 px-6 py-8">
                     <div class="flex items-center justify-between">
